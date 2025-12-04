@@ -2,28 +2,52 @@ const fs = require('fs');
 const path = require('path');
 
 const inputPath = path.join(__dirname, 'main_input.txt');
-const lines = fs.readFileSync(inputPath, 'utf8').split(/\r?\n/);
+let lines = fs.readFileSync(inputPath, 'utf8').split(/\r?\n/);
 
 let count = 0;
+let removed = 0;
 
-for (const line of lines) {
-    let joltage = [0,0,0,0,0,0,0,0,0,0,0,0,0]
-    let indexes = [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1];
-    let batteries = line.split('');
-    for (let i = 0; i < 13; i++) {
-        for (let j = indexes[i-1] + 1; j < batteries.length - (12 - i); j++) {
-            if (batteries[j] > joltage[i]) {
-                joltage[i] = parseInt(batteries[j]);
-                indexes[i] = j;
+for (let i = 0; i < lines.length; i++) {
+    lines[i] = lines[i].split("");
+}
+
+do {
+    removed = 0;
+    for (let i = 0; i < lines.length; i++) {
+        for (let j = 0; j < lines[i].length; j++) {
+            let neighbors = 0;
+            if (i !== 0) {
+                if (j !== 0) {
+                    if (lines[i-1][j-1] === "@") neighbors++;
+                }
+                if (lines[i-1][j] === "@") neighbors++;
+                if (j !== lines[i].length - 1) {
+                    if (lines[i - 1][j + 1] === "@") neighbors++;
+                }
+            }
+            if (j !== 0) {
+                if (lines[i][j - 1] === "@") neighbors++;
+            }
+            if (j !== lines[i].length - 1) {
+                if (lines[i][j + 1] === "@") neighbors++;
+            }
+            if (i !== lines.length - 1) {
+                if (j !== 0) {
+                    if (lines[i + 1][j - 1] === "@") neighbors++;
+                }
+                if (lines[i + 1][j] === "@") neighbors++;
+                if (j !== lines[i].length - 1) {
+                    if (lines[i + 1][j + 1] === "@") neighbors++;
+                }
+            }
+            if (neighbors < 4 && lines[i][j] === "@") {
+                count++;
+                lines[i][j] = "x";
+                removed++;
             }
         }
     }
-    joltage.shift()
-    let num = "";
-    for (const number of joltage) {
-        num += number;
-    }
-    count += parseInt(num);
-}
+} while (removed > 0);
+
 
 console.log(count);
