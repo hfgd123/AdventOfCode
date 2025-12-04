@@ -13,10 +13,7 @@ function solve(testcase) {
         width.push(parseInt(test[0].substr(1)));
         length.push(parseInt(test[1].substr(0, test[1].length - 1)));
     }
-    let solution = Math.min(...width) * Math.min(...length)
-
-
-    return solution;
+    return Math.min(...width) * Math.min(...length);
 }
 
 var numTestcases = null;
